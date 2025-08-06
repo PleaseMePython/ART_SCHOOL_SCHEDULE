@@ -8,10 +8,29 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi (>=0.116.1,<0.117.0)",
+    "openpyxl (>=3.1.5,<4.0.0)",
+    "pydantic-xml (>=2.17.3,<3.0.0)",
+    "uvicorn[standard] (>=0.35.0,<0.36.0)",
+    "python-multipart (>=0.0.20,<0.0.21)"
 ]
 
+[virtualenvs]
+in-project = true
+path = ".venv"
+
 [tool.poetry]
-packages = [{include = "art_school_schedule", from = "src"}]
+packages = [{include = "src"}]
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.12.5"
+pre-commit = "^4.2.0"
+mypy = "^1.17.0"
+httpx = "^0.28.1"
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
+pytest-asyncio = "^1.1.0"
+pytest-integration = "^0.2.3"
 
 
 [build-system]
