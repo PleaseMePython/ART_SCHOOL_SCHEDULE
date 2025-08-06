@@ -1,0 +1,19 @@
+[project]
+name = "art-school-schedule"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "PleaseMePython",email = "Please.Me.Python@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+]
+
+[tool.poetry]
+packages = [{include = "art_school_schedule", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
