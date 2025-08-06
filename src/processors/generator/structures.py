@@ -356,12 +356,11 @@ class GeneratorData:
                 dst_day = getattr(dst_teacher, day_name)
                 if time_table_key.time_of_day == TimeOfDay.MORNING:
                     if dst_day.morning is None:
-                        setattr(dst_day,'morning', dst.PartOfDay(lessons=[]))
+                        dst_day.morning = dst.PartOfDay(lessons=[])
                     dst_day.morning.lessons.append(lesson)
                 else:
                     if dst_day.afternoon is None:
-                        setattr(dst_day, 'afternoon', dst.PartOfDay(
-                            lessons=[]))
+                        dst_day.afternoon = dst.PartOfDay(lessons=[])
                     dst_day.afternoon.lessons.append(lesson)
             destination.teachers.append(dst_teacher)
         return destination

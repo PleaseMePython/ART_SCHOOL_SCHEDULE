@@ -29,15 +29,18 @@ class Excel:
         if not s:
             Exception('Исходный файл имеет неверный формат')
 
-        wb = load_workbook(template_path)
-        global_names = wb.defined_names
-        wsp = wb['Шаблон']
+        wb = load_workbook(template_path)  # Чтение книги из файла
+        global_names = wb.defined_names  # Диспетчер имен
+        wsp = wb['Шаблон']  # Обращение к листу
         for teacher in s.teachers:
-            wst = wb.copy_worksheet(wsp)
-            wst.title = teacher.name
+            wst = wb.copy_worksheet(wsp)  # Копирование листа
+            wst.title = teacher.name  # Переименование листа
             for gn, gn_data in global_names.items():
+                # Замена ссылки на лист в формуле для именованного диапазона
                 gn_ref = gn_data.attr_text.replace('Шаблон', f"'{teacher.name}'", 1)
+                # Создаем имя из новой ссылки
                 loc_name = DefinedName(gn, attr_text=gn_ref)
+                # Добавляем имя на новый лист
                 wst.defined_names.add(loc_name)
 
             self.__model_to_sheet(ws=wst, model=teacher)

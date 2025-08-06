@@ -2,11 +2,18 @@
 
 import shutil
 from pathlib import Path
+
+# Для создания временной папки
 from tempfile import TemporaryDirectory
 from typing import List
 
+# Для загрузки файлов на сервер
 from fastapi import APIRouter, HTTPException, UploadFile
+
+# Для выгрузки файлов с сервера
 from fastapi.responses import FileResponse
+
+# Фоновое задание
 from starlette.background import BackgroundTasks
 
 import src.common.constants as constants
@@ -90,9 +97,8 @@ async def api_excel(files: List[UploadFile], background_tasks: BackgroundTasks):
                 with Path.open(source_file_name, 'wb') as source_file_file:
                     source_file_file.write(await file.read())
                     source_file_found = True
-            elif (
-                file.content_type == constants.XLSX_MIME_TYPE
-                and filename.endswith('.xlsx')
+            elif file.content_type == constants.XLSX_MIME_TYPE and filename.endswith(
+                '.xlsx'
             ):
                 with Path.open(xlsx_template_name, 'wb') as xlsx_file:
                     xlsx_file.write(await file.read())

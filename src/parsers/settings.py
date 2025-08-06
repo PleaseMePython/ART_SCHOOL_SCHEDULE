@@ -2,7 +2,6 @@
 
 from typing import List, Literal, Optional
 
-from pydantic_core import ValidationError
 from pydantic_xml import BaseXmlModel, attr, element, wrapped
 
 # Да/Нет
@@ -88,9 +87,4 @@ def parse_settings(xml: str) -> Settings | None:
     :arg xml: Текст файла
     :return Settings: Распознанные данные
     """
-    try:
-        return Settings.from_xml(xml)
-    except ValidationError as e:
-        #!!! TODO logging
-        print(e)
-        return None
+    return Settings.from_xml(xml)
