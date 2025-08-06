@@ -2,7 +2,6 @@
 
 from typing import List, Optional
 
-from pydantic_core import ValidationError
 from pydantic_xml import BaseXmlModel, attr, element
 
 
@@ -26,7 +25,7 @@ class PartOfDay(ScheduleBaseModel):
     lessons: List[Lesson] = element(tag='Урок')
 
 
-class Day(ScheduleBaseModel):
+class DayOfWeek(ScheduleBaseModel):
     """День с двумя сменами."""
 
     morning: Optional[PartOfDay] = element(tag='Утро', default=None)
@@ -37,13 +36,13 @@ class Teacher(ScheduleBaseModel, tag='Преподаватель'):
     """Расписание учителя."""
 
     name: str = attr('ФИО')
-    monday: Day = element(tag='Понедельник', default=None)
-    tuesday: Day = element(tag='Вторник', default=None)
-    wednesday: Day = element(tag='Среда', default=None)
-    thursday: Day = element(tag='Четверг', default=None)
-    friday: Day = element(tag='Пятница', default=None)
-    saturday: Day = element(tag='Суббота', default=None)
-    sunday: Day = element(tag='Воскресенье', default=None)
+    monday: DayOfWeek = element(tag='Понедельник', default=None)
+    tuesday: DayOfWeek = element(tag='Вторник', default=None)
+    wednesday: DayOfWeek = element(tag='Среда', default=None)
+    thursday: DayOfWeek = element(tag='Четверг', default=None)
+    friday: DayOfWeek = element(tag='Пятница', default=None)
+    saturday: DayOfWeek = element(tag='Суббота', default=None)
+    sunday: DayOfWeek = element(tag='Воскресенье', default=None)
 
 
 class Schedule(ScheduleBaseModel, tag='Расписание', skip_empty=True):

@@ -24,7 +24,10 @@ class Excel:
         # Читаем XML с расписанием
         with Path.open(src_path, 'r', encoding='utf-8') as file:
             src_xml = file.read()
-        s:schedule.Schedule = schedule.parse_schedule(src_xml)
+        s: schedule.Schedule = schedule.parse_schedule(src_xml)
+
+        if not s:
+            Exception('Исходный файл имеет неверный формат')
 
         wb = load_workbook(template_path)
         global_names = wb.defined_names
@@ -43,7 +46,12 @@ class Excel:
         wb.save(dst_path)
 
     def __fill_range(
-        self, ws: Worksheet, name: str, value: str, row: int = 1, col: int = 1,
+        self,
+        ws: Worksheet,
+        name: str,
+        value: str,
+        row: int = 1,
+        col: int = 1,
     ):
         """Заполнение именованного диапазона ячеек значением.
 
@@ -78,7 +86,11 @@ class Excel:
         if isinstance(model, list):
             for lesson in model:
                 self.__fill_range(
-                    ws=ws, name=parent_descr, value=lesson.group, row=lesson.npp, col=1,
+                    ws=ws,
+                    name=parent_descr,
+                    value=lesson.group,
+                    row=lesson.npp,
+                    col=1,
                 )
                 self.__fill_range(
                     ws=ws,
@@ -92,9 +104,14 @@ class Excel:
         schedule_model: schedule.ScheduleBaseModel = model
         for model_fields_name in schedule_model.model_fields_set:
             descr = parent_descr + schedule_model.model_fields[model_fields_name].path
-            if schedule_model.model_fields[model_fields_name].location == NodeType.ATTRIBUTE:
+            if (
+                schedule_model.model_fields[model_fields_name].location
+                == NodeType.ATTRIBUTE
+            ):
                 self.__fill_range(
-                    ws=ws, name=descr, value=getattr(schedule_model, model_fields_name),
+                    ws=ws,
+                    name=descr,
+                    value=getattr(schedule_model, model_fields_name),
                 )
             else:
                 child_model = getattr(schedule_model, model_fields_name)

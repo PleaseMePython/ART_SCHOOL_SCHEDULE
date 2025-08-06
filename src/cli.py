@@ -73,6 +73,7 @@ def parse_arguments() -> argparse.Namespace:
     arg_val = parser.parse_args()
     return arg_val
 
+
 def check_arguments(arg_val: argparse.Namespace):
     """Проверка аргументов.
 
@@ -115,6 +116,7 @@ def check_arguments(arg_val: argparse.Namespace):
     if not arg_val.check and not arg_val.destination:
         raise Exception('Не указан целевой файл (справка --help)')
 
+
 def local_client(arg_val: argparse.Namespace):
     """Клиент для локальной проверки программы."""
     if arg_val.generate:
@@ -122,7 +124,7 @@ def local_client(arg_val: argparse.Namespace):
         gen.process(src_path=Path(arg_val.source), dst_path=Path(arg_val.destination))
     elif arg_val.check:
         chk = Checker()
-        chk.process(src_path=Path(arg_val.source))
+        print(chk.process(src_path=Path(arg_val.source)))
     elif arg_val.excel:
         ex = Excel()
         ex.process(
@@ -131,15 +133,26 @@ def local_client(arg_val: argparse.Namespace):
             dst_path=Path(arg_val.destination),
         )
 
+
 def http_client(arg_val: argparse.Namespace):
     """Клиент для работы с программой через http."""
-    files_to_upload = [('files',('source' + FILE_EXTENSION,
-                                 Path.open(arg_val.source,'rb'),
-                                 FILE_MIME_TYPE)) ]
+    files_to_upload = [
+        (
+            'files',
+            (
+                'source' + FILE_EXTENSION,
+                Path.open(arg_val.source, 'rb'),
+                FILE_MIME_TYPE,
+            ),
+        )
+    ]
     if arg_val.excel:
-        files_to_upload.append(('files',('template.xlsx',
-                                 Path.open(arg_val.template,'rb'),
-                                 XLSX_MIME_TYPE)))
+        files_to_upload.append(
+            (
+                'files',
+                ('template.xlsx', Path.open(arg_val.template, 'rb'), XLSX_MIME_TYPE),
+            )
+        )
     api_url = arg_val.url
     if ':' not in api_url:
         api_url += ':8000'
@@ -151,7 +164,8 @@ def http_client(arg_val: argparse.Namespace):
         api_url += '/api/v1/excel/'
 
     response = requests.post(
-        api_url, files=files_to_upload,
+        api_url,
+        files=files_to_upload,
         timeout=10,
     )
 

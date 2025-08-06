@@ -16,7 +16,7 @@ format:
 fix:
 	python -m ruff check src --fix
 typing:
-	python -m mypy src --follow-untyped-imports
+	python -m mypy src --follow-untyped-imports --check-untyped-defs
 test:
 	coverage run --source=src -m pytest -v .\tests\api\test_api.py
 	coverage report -m

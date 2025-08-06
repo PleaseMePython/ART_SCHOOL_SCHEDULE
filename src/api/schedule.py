@@ -31,7 +31,8 @@ async def api_generate(files: List[UploadFile], background_tasks: BackgroundTask
         )
         source_file_found = False
         for file in files:
-            if file.content_type == constants.FILE_MIME_TYPE and file.filename.endswith(
+            filename = str(file.filename)
+            if file.content_type == constants.FILE_MIME_TYPE and filename.endswith(
                 constants.FILE_EXTENSION,
             ):
                 with Path.open(source_file_name, 'wb') as source_file:
@@ -55,7 +56,8 @@ async def api_check(files: List[UploadFile]):
         source_file_name = Path(temp_dir).joinpath('source' + constants.FILE_EXTENSION)
         source_file_found = False
         for file in files:
-            if file.content_type == constants.FILE_MIME_TYPE and file.filename.endswith(
+            filename = str(file.filename)
+            if file.content_type == constants.FILE_MIME_TYPE and filename.endswith(
                 constants.FILE_EXTENSION,
             ):
                 with Path.open(source_file_name, 'wb') as source_file:
@@ -64,8 +66,7 @@ async def api_check(files: List[UploadFile]):
         if not source_file_found:
             raise HTTPException(415)
         chk = Checker()
-        chk.process(source_file_name)
-    return {'status': 'ok'}
+        return chk.process(source_file_name)
 
 
 @router.post('/api/v1/excel/', response_class=FileResponse)
@@ -82,7 +83,8 @@ async def api_excel(files: List[UploadFile], background_tasks: BackgroundTasks):
         source_file_found = False
         template_found = False
         for file in files:
-            if file.content_type == constants.FILE_MIME_TYPE and file.filename.endswith(
+            filename = str(file.filename)
+            if file.content_type == constants.FILE_MIME_TYPE and filename.endswith(
                 constants.FILE_EXTENSION,
             ):
                 with Path.open(source_file_name, 'wb') as source_file_file:
@@ -90,7 +92,7 @@ async def api_excel(files: List[UploadFile], background_tasks: BackgroundTasks):
                     source_file_found = True
             elif (
                 file.content_type == constants.XLSX_MIME_TYPE
-                and file.filename.endswith('.xlsx')
+                and filename.endswith('.xlsx')
             ):
                 with Path.open(xlsx_template_name, 'wb') as xlsx_file:
                     xlsx_file.write(await file.read())

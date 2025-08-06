@@ -309,7 +309,8 @@ class GeneratorData:
                         teacher_id,
                     )
                 teacher_info.subjects[subject_id] = TeacherSubjectInfo(
-                    autoselect_groups=any_groups, groups=group_set,
+                    autoselect_groups=any_groups,
+                    groups=group_set,
                 )
                 for group in group_set:
                     self.subject_assignment[
@@ -324,7 +325,9 @@ class GeneratorData:
             teacher_id += 1
             self.teachers_names_unique[src_teacher.name] = teacher_id
             teacher_info = TeacherInfo(
-                teacher_name=src_teacher.name, subjects={}, time_table={},
+                teacher_name=src_teacher.name,
+                subjects={},
+                time_table={},
             )
             default_groups: Set[GroupId] = set()
             fill_groups(src_teacher.morning, TimeOfDay.MORNING)
@@ -348,17 +351,17 @@ class GeneratorData:
                     group=time_table_value.group,
                 )
                 day_name = days_of_week[time_table_key.day].day_name
-                dst_day = getattr(dst_teacher, day_name, None)
-                if dst_day is None:
-                    setattr(dst_teacher, day_name, dst.Day())
-                    dst_day = getattr(dst_teacher, day_name, None)
+                if not hasattr(lesson, day_name):
+                    setattr(dst_teacher, day_name, dst.DayOfWeek())
+                dst_day = getattr(dst_teacher, day_name)
                 if time_table_key.time_of_day == TimeOfDay.MORNING:
                     if dst_day.morning is None:
-                        dst_day.morning = dst.PartOfDay(lessons=[])
+                        setattr(dst_day,'morning', dst.PartOfDay(lessons=[]))
                     dst_day.morning.lessons.append(lesson)
                 else:
                     if dst_day.afternoon is None:
-                        dst_day.afternoon = dst.PartOfDay(lessons=[])
+                        setattr(dst_day, 'afternoon', dst.PartOfDay(
+                            lessons=[]))
                     dst_day.afternoon.lessons.append(lesson)
             destination.teachers.append(dst_teacher)
         return destination

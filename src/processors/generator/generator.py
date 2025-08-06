@@ -33,8 +33,7 @@ class Generator:
         # Парсим через pydantic_xml
         src_data = settings.parse_settings(src_content)
         if not src_data:
-            #!!! TODO - записать в log
-            return
+            raise Exception('Исходный файл имеет неверный формат')
 
         self.__data.fill_from_source(src_data)
 
@@ -97,7 +96,9 @@ class Generator:
                 if not lesson_info.teacher_id:
                     continue
                 tt_key = struct.TimeTableKey(
-                    day=_day_num, time_of_day=group_info.time_of_day, npp=npp,
+                    day=_day_num,
+                    time_of_day=group_info.time_of_day,
+                    npp=npp,
                 )
                 if tt_key in self.__data.teachers[lesson_info.teacher_id].time_table:
                     return False
@@ -109,7 +110,7 @@ class Generator:
             :return: Учитель свободен
             """
             # Предметы, для которых надо подобрать учителя
-            subject_map:Dict[struct.SubjectId,List[int]] = {}
+            subject_map: Dict[struct.SubjectId, List[int]] = {}
             for npp, lesson_info in tutors_list.items():
                 if not lesson_info.teacher_id:
                     subject_map.setdefault(lesson_info.subject_id, []).append(npp)
@@ -124,7 +125,9 @@ class Generator:
                     # Проверим, свободен ли учитель в этот момент
                     for npp in subject_map[subject]:
                         tt_key = struct.TimeTableKey(
-                            day=_day_num, time_of_day=group_info.time_of_day, npp=npp,
+                            day=_day_num,
+                            time_of_day=group_info.time_of_day,
+                            npp=npp,
                         )
                         if tt_key in self.__data.teachers[teacher_id].time_table:
                             vacant_flag = False
@@ -152,8 +155,7 @@ class Generator:
                     selected_teacher = choice(vacant_teachers)
                     for npp in subject_map[subject]:
                         tutors_list[npp].teacher_id = selected_teacher
-                all_teachers_found = (all_teachers_found and
-                                      bool(selected_teacher > 0))
+                all_teachers_found = all_teachers_found and bool(selected_teacher > 0)
             return all_teachers_found
 
         def apply_combination(tutors_list):
@@ -165,10 +167,13 @@ class Generator:
             for sbj_npp, sbj_info in tutors_list.items():
                 group_info.time_table[
                     struct.TimeTableKey(
-                        day=_day_num, time_of_day=group_info.time_of_day, npp=sbj_npp,
+                        day=_day_num,
+                        time_of_day=group_info.time_of_day,
+                        npp=sbj_npp,
                     )
                 ] = struct.GroupTimeTableInfo(
-                    subject_id=sbj_info.subject_id, teacher_id=sbj_info.teacher_id,
+                    subject_id=sbj_info.subject_id,
+                    teacher_id=sbj_info.teacher_id,
                 )
 
         # Перечень предметов
@@ -197,7 +202,8 @@ class Generator:
                     n: struct.GroupTimeTableInfo(
                         subject_id=s,
                         teacher_id=self.__data.subject_assignment.get(
-                            struct.SubjectAssignmentKey(group=group_id, subject=s), 0,
+                            struct.SubjectAssignmentKey(group=group_id, subject=s),
+                            0,
                         ),
                     )
                     for n, s in enumerate(combination, 1)
@@ -217,7 +223,9 @@ class Generator:
         return reduce(operator.add, [v.hours for v in curriculum.values()]) == 0
 
     def map_to_teachers_tt(
-        self, group_id: struct.GroupId, group_tt: struct.GroupTimeTable,
+        self,
+        group_id: struct.GroupId,
+        group_tt: struct.GroupTimeTable,
     ):
         """Преобразование расписания для групп в расписание для учителей.
 
@@ -227,10 +235,13 @@ class Generator:
         for gtt_key, gtt_info in group_tt.items():
             if gtt_info.teacher_id:
                 tt_key = struct.TimeTableKey(
-                    day=gtt_key.day, time_of_day=gtt_key.time_of_day, npp=gtt_key.npp,
+                    day=gtt_key.day,
+                    time_of_day=gtt_key.time_of_day,
+                    npp=gtt_key.npp,
                 )
                 tt_info = struct.TimeTableInfo(
-                    subject_id=gtt_info.subject_id, group=group_id,
+                    subject_id=gtt_info.subject_id,
+                    group=group_id,
                 )
                 self.__data.teachers[gtt_info.teacher_id].time_table[tt_key] = tt_info
 
