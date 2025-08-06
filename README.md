@@ -14,7 +14,7 @@
 ### Запуск серверной части
 
 ```cmd
-    uvicorn main:app
+    uvicorn src.main:app
 ```
 
 ### Запуск клиентской части

@@ -6,7 +6,7 @@ setup:
 	python -m poetry install
 
 run:
-	uvicorn main:app --reload
+	uvicorn src.main:app --reload
 client:
 	python src\cli.py
 lint:
