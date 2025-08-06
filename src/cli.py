@@ -68,7 +68,7 @@ def parse_arguments() -> argparse.Namespace:
         '-d',
         '--destination',
         type=str,
-        help='целевой файл XML или каталог для сохранения результата',
+        help='целевой файл XML или XLSX',
     )
     arg_val = parser.parse_args()
     return arg_val
@@ -166,10 +166,9 @@ def http_client(arg_val: argparse.Namespace):
 def cli_main() -> None:
     """Запуск из консоли."""
     arg_val = parse_arguments()
-
-    check_arguments(arg_val)
-
     try:
+        check_arguments(arg_val)
+
         if arg_val.local:
             local_client(arg_val)
         else:
@@ -177,6 +176,8 @@ def cli_main() -> None:
     except Exception as err:
         print(err)
         sys.exit(1)
+
+    print('Файлы обработаны успешно!!!')
 
 
 if __name__ == '__main__':
